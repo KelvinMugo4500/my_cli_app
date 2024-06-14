@@ -1,24 +1,21 @@
-CREATE TABLE IF NOT EXISTS authors (
+-- schema.sql
+DROP TABLE IF EXISTS authors;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS publishers;
+
+CREATE TABLE authors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE
+    name TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS books (
+CREATE TABLE books (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
-    author_id INTEGER NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES authors(id)
+    author_id INTEGER,
+    FOREIGN KEY (author_id) REFERENCES authors (id)
 );
 
-CREATE TABLE IF NOT EXISTS publishers (
+CREATE TABLE publishers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS book_publishers (
-    book_id INTEGER NOT NULL,
-    publisher_id INTEGER NOT NULL,
-    FOREIGN KEY (book_id) REFERENCES books(id),
-    FOREIGN KEY (publisher_id) REFERENCES publishers(id),
-    PRIMARY KEY (book_id, publisher_id)
+    name TEXT NOT NULL
 );

@@ -1,102 +1,136 @@
-# My CLI App
+# Library Management CLI Application
 
-My CLI App is a command-line interface application for managing a library system. It allows users to create, list, and delete authors and books. The application uses a SQLite database for storing data and is built with Python using the `click` library for the CLI interface.
+This is a Python CLI application for managing a library. It allows users to manage authors, books, and publishers. The application uses SQLite for data storage and the Click library for the command-line interface.
 
-## Table of Contents
+## Features
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Commands](#commands)
-- [Project Structure](#project-structure)
-- [Dependencies](#dependencies)
+- Manage authors: create, list, delete.
+- Manage books: create, list, delete.
+- Manage publishers: create, list, delete.
+
+## Requirements
+
+- Python 3.9 or higher
+- pipenv
 
 ## Installation
 
-### Prerequisites
+1. **Clone the repository** (if you haven't already):
 
-- Python 3.8 or higher
-- Pipenv for managing virtual environments
-
-### Steps
-
-1. Navigate to your project directory:
     ```bash
-    cd path/to/your/my_cli_app
+    git clone https://github.com/yourusername/yourrepository.git
+    cd yourrepository
     ```
 
-2. Create a virtual environment and install dependencies:
+2. **Install dependencies**:
+
     ```bash
     pipenv install
     ```
 
-3. Activate the virtual environment:
-    ```bash
-    pipenv shell
-    ```
+3. **Initialize the database**:
 
-4. Initialize the database:
     ```bash
-    python -c "from database import init_db; init_db()"
+    pipenv run python init_db.py
     ```
 
 ## Usage
 
-Once the setup is complete, you can start using the CLI application to manage authors and books.
-
-### Example Commands
+### Author Commands
 
 - Create an author:
+
     ```bash
-    python cli.py create-author "John Doe"
+    pipenv run python cli.py create-author "Author Name"
     ```
 
 - List all authors:
+
     ```bash
-    python cli.py list-authors
+    pipenv run python cli.py list-authors
     ```
 
-- Delete an author:
+- Delete an author by ID:
+
     ```bash
-    python cli.py delete-author <author_id>
+    pipenv run python cli.py delete-author 1
     ```
-
-- Create a book:
-    ```bash
-    python cli.py create-book "The Great Adventure" <author_id>
-    ```
-
-- List all books:
-    ```bash
-    python cli.py list-books
-    ```
-
-- Delete a book:
-    ```bash
-    python cli.py delete-book <book_id>
-    ```
-
-Replace `<author_id>` and `<book_id>` with the actual IDs of the author or book.
-
-## Commands
-
-### Author Commands
-
-- `create-author <name>`: Creates a new author with the given name.
-- `list-authors`: Lists all authors in the database.
-- `delete-author <author_id>`: Deletes the author with the specified ID.
 
 ### Book Commands
 
-- `create-book <title> <author_id>`: Creates a new book with the given title and author ID.
-- `list-books`: Lists all books in the database.
-- `delete-book <book_id>`: Deletes the book with the specified ID.
+- Create a book (author ID is required):
+
+    ```bash
+    pipenv run python cli.py create-book "Book Title" 1
+    ```
+
+- List all books:
+
+    ```bash
+    pipenv run python cli.py list-books
+    ```
+
+- Delete a book by ID:
+
+    ```bash
+    pipenv run python cli.py delete-book 1
+    ```
+
+### Publisher Commands
+
+- Create a publisher:
+
+    ```bash
+    pipenv run python cli.py create-publisher "Publisher Name"
+    ```
+
+- List all publishers:
+
+    ```bash
+    pipenv run python cli.py list-publishers
+    ```
+
+- Delete a publisher by ID:
+
+    ```bash
+    pipenv run python cli.py delete-publisher 1
+    ```
 
 
 ## Dependencies
 
-- [click](https://pypi.org/project/click/): A package for creating command-line interfaces.
-- [sqlite3](https://docs.python.org/3/library/sqlite3.html): A package for interacting with SQLite databases (built into Python).
+- `click` - For creating the CLI interface
+- `rich` - For enhanced CLI output
 
-## License
+## Database Schema
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The database schema is defined in `schema.sql`:
+
+```sql
+-- schema.sql
+DROP TABLE IF EXISTS authors;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS publishers;
+
+CREATE TABLE authors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author_id INTEGER,
+    FOREIGN KEY (author_id) REFERENCES authors (id)
+);
+
+CREATE TABLE publishers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
+
+##License
+
+This `README.md` file provides detailed instructions for setting up and using the CLI application, including commands for managing authors, books, and publishers. It also includes a brief overview of the project structure and dependencies.
+
+

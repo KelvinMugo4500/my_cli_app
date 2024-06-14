@@ -9,97 +9,108 @@ console = Console()
 def cli():
     pass
 
-@cli.command()
+# Author commands
+@click.command()
 @click.argument('name')
 def create_author(name):
-    author_id = Author.create(name)
-    if author_id:
-        console.print(f'[bold green]Author "{name}" created successfully with id {author_id}.[/bold green]')
-    else:
-        console.print(f'[bold red]Author "{name}" already exists.[/bold red]')
+    Author.create(name)
+    console.print(f"Author [bold green]{name}[/bold green] created successfully.")
 
-@cli.command()
+@click.command()
 def list_authors():
     authors = Author.get_all()
-    table = Table(title="Authors")
-    table.add_column("ID", justify="right", style="cyan", no_wrap=True)
-    table.add_column("Name", style="magenta")
+    if authors:
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("ID", style="dim", width=6)
+        table.add_column("Name", min_width=20)
+        for author in authors:
+            table.add_row(str(author[0]), author[1])
+        console.print(table)
+    else:
+        console.print("No authors found.", style="bold red")
 
-    for author in authors:
-        table.add_row(str(author["id"]), author["name"])
-
-    console.print(table)
-
-@cli.command()
+@click.command()
 @click.argument('author_id', type=int)
 def delete_author(author_id):
-    rows_deleted = Author.delete(author_id)
-    if rows_deleted:
-        console.print(f'[bold green]Author with id "{author_id}" deleted successfully.[/bold green]')
+    if Author.find_by_id(author_id):
+        Author.delete(author_id)
+        console.print(f"Author with ID [bold red]{author_id}[/bold red] deleted successfully.")
     else:
-        console.print(f'[bold red]Author with id "{author_id}" not found.[/bold red]')
+        console.print(f"Author with ID [bold red]{author_id}[/bold red] not found.", style="bold red")
 
-@cli.command()
+# Book commands
+@click.command()
 @click.argument('title')
 @click.argument('author_id', type=int)
 def create_book(title, author_id):
-    book_id = Book.create(title, author_id)
-    if book_id:
-        console.print(f'[bold green]Book "{title}" created successfully with id {book_id}.[/bold green]')
+    if Author.find_by_id(author_id):
+        Book.create(title, author_id)
+        console.print(f"Book [bold green]{title}[/bold green] created successfully.")
     else:
-        console.print(f'[bold red]Error creating book "{title}". Check if the author ID {author_id} exists.[/bold red]')
+        console.print(f"Author with ID [bold red]{author_id}[/bold red] not found. Cannot create book.", style="bold red")
 
-@cli.command()
+@click.command()
 def list_books():
     books = Book.get_all()
-    table = Table(title="Books")
-    table.add_column("ID", justify="right", style="cyan", no_wrap=True)
-    table.add_column("Title", style="magenta")
-    table.add_column("Author", style="green")
+    if books:
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("ID", style="dim", width=6)
+        table.add_column("Title", min_width=20)
+        table.add_column("Author ID", min_width=10)
+        for book in books:
+            table.add_row(str(book[0]), book[1], str(book[2]))
+        console.print(table)
+    else:
+        console.print("No books found.", style="bold red")
 
-    for book in books:
-        table.add_row(str(book["id"]), book["title"], book["author_name"])
-
-    console.print(table)
-
-@cli.command()
+@click.command()
 @click.argument('book_id', type=int)
 def delete_book(book_id):
-    rows_deleted = Book.delete(book_id)
-    if rows_deleted:
-        console.print(f'[bold green]Book with id "{book_id}" deleted successfully.[/bold green]')
+    if Book.find_by_id(book_id):
+        Book.delete(book_id)
+        console.print(f"Book with ID [bold red]{book_id}[/bold red] deleted successfully.")
     else:
-        console.print(f'[bold red]Book with id "{book_id}" not found.[/bold red]')
+        console.print(f"Book with ID [bold red]{book_id}[/bold red] not found.", style="bold red")
 
-@cli.command()
+# Publisher commands
+@click.command()
 @click.argument('name')
 def create_publisher(name):
-    publisher_id = Publisher.create(name)
-    if publisher_id:
-        console.print(f'[bold green]Publisher "{name}" created successfully with id {publisher_id}.[/bold green]')
-    else:
-        console.print(f'[bold red]Publisher "{name}" already exists.[/bold red]')
+    Publisher.create(name)
+    console.print(f"Publisher [bold green]{name}[/bold green] created successfully.")
 
-@cli.command()
+@click.command()
 def list_publishers():
     publishers = Publisher.get_all()
-    table = Table(title="Publishers")
-    table.add_column("ID", justify="right", style="cyan", no_wrap=True)
-    table.add_column("Name", style="magenta")
+    if publishers:
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("ID", style="dim", width=6)
+        table.add_column("Name", min_width=20)
+        for publisher in publishers:
+            table.add_row(str(publisher[0]), publisher[1])
+        console.print(table)
+    else:
+        console.print("No publishers found.", style="bold red")
 
-    for publisher in publishers:
-        table.add_row(str(publisher["id"]), publisher["name"])
-
-    console.print(table)
-
-@cli.command()
+@click.command()
 @click.argument('publisher_id', type=int)
 def delete_publisher(publisher_id):
-    rows_deleted = Publisher.delete(publisher_id)
-    if rows_deleted:
-        console.print(f'[bold green]Publisher with id "{publisher_id}" deleted successfully.[/bold green]')
+    if Publisher.find_by_id(publisher_id):
+        Publisher.delete(publisher_id)
+        console.print(f"Publisher with ID [bold red]{publisher_id}[/bold red] deleted successfully.")
     else:
-        console.print(f'[bold red]Publisher with id "{publisher_id}" not found.[/bold red]')
+        console.print(f"Publisher with ID [bold red]{publisher_id}[/bold red] not found.", style="bold red")
 
-if __name__ == "__main__":
+# Add commands to CLI
+cli.add_command(create_author)
+cli.add_command(list_authors)
+cli.add_command(delete_author)
+cli.add_command(create_book)
+cli.add_command(list_books)
+cli.add_command(delete_book)
+cli.add_command(create_publisher)
+cli.add_command(list_publishers)
+cli.add_command(delete_publisher)
+
+if __name__ == '__main__':
     cli()

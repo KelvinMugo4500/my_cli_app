@@ -1,92 +1,95 @@
+# models.py
 from database import get_db_connection
 
 class Author:
-    @staticmethod
-    def create(name):
+    @classmethod
+    def create(cls, name):
         conn = get_db_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute("INSERT INTO authors (name) VALUES (?)", (name,))
-            conn.commit()
-        except sqlite3.IntegrityError:
-            return None
-        finally:
-            conn.close()
-        return cursor.lastrowid
+        conn.execute('INSERT INTO authors (name) VALUES (?)', (name,))
+        conn.commit()
+        conn.close()
 
-    @staticmethod
-    def get_all():
+    @classmethod
+    def delete(cls, author_id):
         conn = get_db_connection()
-        authors = conn.execute("SELECT * FROM authors").fetchall()
+        conn.execute('DELETE FROM authors WHERE id = ?', (author_id,))
+        conn.commit()
+        conn.close()
+
+    @classmethod
+    def get_all(cls):
+        conn = get_db_connection()
+        cursor = conn.execute('SELECT * FROM authors')
+        authors = cursor.fetchall()
         conn.close()
         return authors
 
-    @staticmethod
-    def delete(author_id):
+    @classmethod
+    def find_by_id(cls, author_id):
         conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM authors WHERE id = ?", (author_id,))
-        conn.commit()
+        cursor = conn.execute('SELECT * FROM authors WHERE id = ?', (author_id,))
+        author = cursor.fetchone()
         conn.close()
-        return cursor.rowcount
+        return author
 
 class Book:
-    @staticmethod
-    def create(title, author_id):
+    @classmethod
+    def create(cls, title, author_id):
         conn = get_db_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute("INSERT INTO books (title, author_id) VALUES (?, ?)", (title, author_id))
-            conn.commit()
-        except sqlite3.IntegrityError:
-            return None
-        finally:
-            conn.close()
-        return cursor.lastrowid
+        conn.execute('INSERT INTO books (title, author_id) VALUES (?, ?)', (title, author_id))
+        conn.commit()
+        conn.close()
 
-    @staticmethod
-    def get_all():
+    @classmethod
+    def delete(cls, book_id):
         conn = get_db_connection()
-        books = conn.execute("SELECT books.id, books.title, authors.name AS author_name "
-                             "FROM books JOIN authors ON books.author_id = authors.id").fetchall()
+        conn.execute('DELETE FROM books WHERE id = ?', (book_id,))
+        conn.commit()
+        conn.close()
+
+    @classmethod
+    def get_all(cls):
+        conn = get_db_connection()
+        cursor = conn.execute('SELECT * FROM books')
+        books = cursor.fetchall()
         conn.close()
         return books
 
-    @staticmethod
-    def delete(book_id):
+    @classmethod
+    def find_by_id(cls, book_id):
         conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM books WHERE id = ?", (book_id,))
-        conn.commit()
+        cursor = conn.execute('SELECT * FROM books WHERE id = ?', (book_id,))
+        book = cursor.fetchone()
         conn.close()
-        return cursor.rowcount
+        return book
 
 class Publisher:
-    @staticmethod
-    def create(name):
+    @classmethod
+    def create(cls, name):
         conn = get_db_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute("INSERT INTO publishers (name) VALUES (?)", (name,))
-            conn.commit()
-        except sqlite3.IntegrityError:
-            return None
-        finally:
-            conn.close()
-        return cursor.lastrowid
+        conn.execute('INSERT INTO publishers (name) VALUES (?)', (name,))
+        conn.commit()
+        conn.close()
 
-    @staticmethod
-    def get_all():
+    @classmethod
+    def delete(cls, publisher_id):
         conn = get_db_connection()
-        publishers = conn.execute("SELECT * FROM publishers").fetchall()
+        conn.execute('DELETE FROM publishers WHERE id = ?', (publisher_id,))
+        conn.commit()
+        conn.close()
+
+    @classmethod
+    def get_all(cls):
+        conn = get_db_connection()
+        cursor = conn.execute('SELECT * FROM publishers')
+        publishers = cursor.fetchall()
         conn.close()
         return publishers
 
-    @staticmethod
-    def delete(publisher_id):
+    @classmethod
+    def find_by_id(cls, publisher_id):
         conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM publishers WHERE id = ?", (publisher_id,))
-        conn.commit()
+        cursor = conn.execute('SELECT * FROM publishers WHERE id = ?', (publisher_id,))
+        publisher = cursor.fetchone()
         conn.close()
-        return cursor.rowcount
+        return publisher
